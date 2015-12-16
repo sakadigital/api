@@ -1,0 +1,19 @@
+{
+    "name": "sakadigital/api-documentation",
+    "type": "library",
+    "description": "just for test",
+    "license": "MIT",
+    "authors": [
+        {"name": "Sakadigital","email": "tech@sakadigital.id"},
+        {"name": "Deden Maulana","email": "aku@dedenmaulana.com"}
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sakadigital\\ApiDocumentation\\": "src"
+        }
+    },
+    "minimum-stability": "stable"
+}
