@@ -1,5 +1,5 @@
 {
-    "name": "sakadigital/api-documentation",
+    "name": "sakadigital/api",
     "type": "library",
     "description": "just for test",
     "license": "MIT",
@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Sakadigital\\ApiDocumentation\\": "src"
+            "Sakadigital\\Api\\": "src"
         }
     },
     "minimum-stability": "stable"
