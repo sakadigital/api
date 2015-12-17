@@ -43,12 +43,12 @@ class ApiServiceProvider extends ServiceProvider
 
         //publish config file
         $this->publishes([
-            __DIR__.'/../config/apidoc.php' => config_path('apidoc.php'),
+            __DIR__.'/../config/api.php' => config_path('api.php'),
         ], 'config');
 
         //publish asset
         $this->publishes([
-            __DIR__.'/../public' => public_path('apidoc'),
+            __DIR__.'/../public' => public_path('api'),
         ], 'public');
         
         if ($this->app->runningInConsole()) {
