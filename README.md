@@ -9,7 +9,9 @@ Build Rest Api with laravel Php Framework. This package also  genrate automaticl
 * Bypass csrf token laravel for api prefix
 * Auto-generation of API documentation based on docblock
 * Simulate API call & view API return data
+
 ## Installation
+
 Require this package with composer:
 ```
 composer require sakadigital/api
