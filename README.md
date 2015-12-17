@@ -67,7 +67,9 @@ each function must have a description, param, return, and error. example:
 ```
 in `@param` contain information about paramter, description and validation rule that sparated by `|`, and in `@return` also contain return type or name and description of function return. `@error` is special error that function made, you can give the information to the error.
 * Place your all controllers inside Api controllers folder.
+
 ### using versioning
+
 if you will make your api with many version create folder inside you api namespace :
 ```
 App
@@ -87,7 +89,9 @@ place your `routes.php` in each version and create `Controllers` folder in each 
 ```
 your version prefix will placed in second url prefix
 http://yourdomain.com/{api-prefix}/{version-prefix}/
+
 ### Routing
+
 this package will automaticly append prefix to routes as api config file
 ```
 Route::get('test', function(){
