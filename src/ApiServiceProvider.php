@@ -31,11 +31,6 @@ class ApiServiceProvider extends ServiceProvider
     {
         $config = $this->app['config'];
         
-        if ($config->get('api.bypass_scrf_token'))
-        {
-            $kernel->pushMiddleware('Sakadigital\Api\Middleware\Api');
-        }
-
         //publish asset
         $this->publishes([
             __DIR__.'/../app' => app_path('Api'),
@@ -148,8 +143,9 @@ class ApiServiceProvider extends ServiceProvider
             }
         }
 
-        $response = $kernel->handle(
-            $request = \Illuminate\Http\Request::capture()
-        );
+        if ($config->get('api.bypass_scrf_token'))
+        {
+            $kernel->pushMiddleware('Sakadigital\Api\Middleware\Api');
+        }
     }
 }

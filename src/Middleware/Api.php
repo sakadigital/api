@@ -17,7 +17,7 @@ class Api extends BaseVerifier {
 
 	public function handle($request, Closure $next)
 	{
-		if ($this->excludedRoutes($request))
+		if ($request->segment(1) === Config::get('api.prefix'))
 		{
 			return $next($request);
 		}
@@ -27,16 +27,5 @@ class Api extends BaseVerifier {
 		}
 
 		throw new TokenMismatchException;
-	}
-
-	##IMPORTANT## BYPASS CSRF LARAVEL CHECKING
-	protected function excludedRoutes($request)  
-	{
-		if ($request->segment(1) === Config::get('api.prefix'))
-		{
-				return TRUE;
-		}
-
-		return FALSE;
 	}
 }
