@@ -4,24 +4,24 @@
 	<meta charset="UTF-8">
 	<title>{{$content['page_title']}}</title>
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/bootstrap.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/bootstrap-theme.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/AdminLTE.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/_all-skins.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/font-awesome.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/main.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset( '/apidoc/css/jquery.json-viewer.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/bootstrap.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/bootstrap-theme.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/AdminLTE.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/_all-skins.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/font-awesome.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/main.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset( '/api/css/jquery.json-viewer.css') }}">
   </head>
 
 <body class="skin-blue sidebar-mini">
 	<div class="wrapper">
 		<header class="main-header">
-			<a href="{{$baseUrl.'/'.Config::get('apidoc.doc_segment')}}" class="logo">
-				<span class="logo-mini"><img src="{{ asset('apidoc/img/logo.png') }}"></span>
-				<span class="logo-lg"><img src="{{ asset('apidoc/img/logo-saka.png') }}"></span>
+			<a href="{{$baseUrl.'/'.Config::get('api.doc_segment')}}" class="logo">
+				<span class="logo-mini"><img src="{{ asset('api/img/logo.png') }}"></span>
+				<span class="logo-lg"><img src="{{ asset('api/img/logo-saka.png') }}"></span>
 			</a>
 			<nav class="navbar navbar-static-top" role="navigation">
-				<div class="pull-right title">{{Config::get('apidoc.project_name')}} <small>API Documentation</small></div>
+				<div class="pull-right title">{{Config::get('api.project_name')}} <small>API Documentation</small></div>
 				<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
 					<span class="sr-only">Toggle navigation</span>
 				</a>
@@ -31,6 +31,28 @@
 		<aside class="main-sidebar">
 			<section class="sidebar">
 				<ul class="sidebar-menu">
+					@if(Config::get('api.version'))
+					<li class="header">Api versions</li>
+					<li>
+						<div style="padding:10px;">
+							<div class="dropdown">
+								<button class="btn btn-default btn-block dropdown-toggle" type="button" data-toggle="dropdown" style="text-align:left">Version {{$content['current_version']}} <span class="caret" style="float:right;margin:10px 0"></span></button>
+								<ul class="dropdown-menu" style="width:100%">
+									@foreach(Config::get('api.version') as $key => $val)
+										@if(Config::get('api.version.'.$key.'.enabled'))
+										<?php
+											$current_state = '';
+											if ($state['controller'] ==! '') $current_state .= '/'.$state['controller'];
+											if ($state['function'] ==! '') $current_state .= '/'.$state['function'];
+										?>
+										<li><a href="{{ URL::to(Config::get('api.prefix').'/'.Config::get('api.version.'.$key.'.prefix')).'/'.Config::get('api.documentation_prefix').$current_state}}" style="color:#333">Version {{$key}}</a></li>
+										@endif
+									@endforeach
+								</ul>
+							</div>
+						</div>
+					</li>
+					@endif
 					<li class="header">API Objects</li>
 
 					@foreach($menu as $key => $val)
@@ -77,19 +99,19 @@
 			@if($content['type']=='function')
 			<h1>{{strtoupper($content['data']['method'])}} <small>{{$content['data']['uri']}}</small></h1>
 			<ol class="breadcrumb">
-				<li><a href="{{$baseUrl.'/'.Config::get('apidoc.doc_segment')}}"><i class="fa fa-home"></i> Home</a></li>
+				<li><a href="{{$baseUrl.'/'.Config::get('api.documentation_prefix')}}"><i class="fa fa-home"></i> Home</a></li>
 				<li><a href="{{$content['data']['object_uri']}}"><i class="fa fa-file-text-o"></i> {{ucwords($content['data']['object'])}}</a></li>
 				<li class="active">{{$content['data']['name']}}</li>
 			</ol>
 			@elseif($content['type']=='home')
-			<h1>{{Config::get('apidoc.project_name')}} <small>Api Documentation</small></h1>
+			<h1>{{Config::get('api.project_name')}} <small>Api Documentation</small></h1>
 			<ol class="breadcrumb">
-				<li><a href="{{$baseUrl.'/'.Config::get('apidoc.doc_segment')}}"><i class="fa fa-home"></i> Home</a></li>
+				<li><a href="{{$baseUrl.'/'.Config::get('api.documentation_prefix')}}"><i class="fa fa-home"></i> Home</a></li>
 			</ol>
 			@else
 				<h1><small>{{$content['body_title']}}</small></h1>	
 				<ol class="breadcrumb">
-					<li><a href="{{$baseUrl.'/'.Config::get('apidoc.doc_segment')}}"><i class="fa fa-home"></i> Home</a></li>
+					<li><a href="{{$baseUrl.'/'.Config::get('api.documentation_prefix')}}"><i class="fa fa-home"></i> Home</a></li>
 					<li class="active"><i class="fa fa-file-text-o"></i> {{$content['body_title']}}</li>
 				</ol>
 			@endif
@@ -226,12 +248,14 @@
 									<th width="5%"><i class="fa fa-eye"></i></th>
 								</tr>
 								@foreach($content['data'] as $function)
+									@if(is_array($function))
 									<tr>
 										<td>{{$function['name']}}</td>
 										<td>{{$function['method']}}</td>
 										<td>{{$function['api_uri']}}</td>
 										<td><a class="btn btn-default btn-xs" href="{{$function['doc_uri']}}"><i class="fa fa-arrow-right"></i></a></td>
 									</tr>
+									@endif
 								@endforeach
 							</table>
 						</div>
@@ -248,10 +272,10 @@
 	</div><!-- ./wrapper -->
 
 	<!-- jQuery 2.1.4 -->
-	<script src="{{ asset('apidoc/js/jquery.min.js') }}"></script>
-	<script src="{{ asset('apidoc/js/bootstrap.min.js') }}"></script>
-	<script src="{{ asset('apidoc/js/app.min.js') }}" type="text/javascript"></script>    
-	<script src="{{ asset('apidoc/js/jquery.json-viewer.js') }}" type="text/javascript"></script>
+	<script src="{{ asset('api/js/jquery.min.js') }}"></script>
+	<script src="{{ asset('api/js/bootstrap.min.js') }}"></script>
+	<script src="{{ asset('api/js/app.min.js') }}" type="text/javascript"></script>    
+	<script src="{{ asset('api/js/jquery.json-viewer.js') }}" type="text/javascript"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$('#send').click(function(){

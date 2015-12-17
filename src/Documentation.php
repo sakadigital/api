@@ -1,36 +1,40 @@
-<?php namespace Sakadigital\ApiDocumentation;
+<?php namespace Sakadigital\Api;
 
 use URL;
 use Route;
 use Config;
+use Request;
 
 class Documentation {
 
 	protected $_routes;
 	protected $_api_url;
 	protected $_doc_url;
-	public $curret_api;
+	public $current_api;
 
 	public function __construct()
 	{
-		if (is_array($api_segments = Config::get('apidoc.api_segment')))
+		if ( ! Config::get('api.version'))
 		{
-			foreach ($api_segments as $api_segment)
-			{
-				if (strpos(URL::current(), $api_segment) !== false)
-				{
-					$this->_api_url = URL::to($api_segment).'/';
-					$this->curret_api = $api_segment;
-				}
-			}
+			$this->_api_url = URL::to(Config::get('api.prefix')).'/';
+			$this->current_api = Config::get('api.prefix');
+			$this->_doc_url = URL::to(Config::get('api.prefix').'/'.Config::get('api.documentation_prefix')).'/';
 		}
 		else
 		{
-			$this->_api_url = URL::to(Config::get('apidoc.api_segment')).'/';
-			$this->curret_api = Config::get('apidoc.api_segment');
+			foreach (Config::get('api.version') as $key => $value)
+			{
+				if ( ! Config::get('api.version.'.$key.'.enabled')) continue;
+
+				if (Request::segment(2) === Config::get('api.version.'.$key.'.prefix')) 
+				{
+					$this->_api_url = URL::to(Config::get('api.prefix').'/'.Config::get('api.version.'.$key.'.prefix')).'/';
+					$this->current_api = Config::get('api.prefix').'/'.Config::get('api.version.'.$key.'.prefix');
+					$this->_doc_url = URL::to(Config::get('api.prefix').'/'.Config::get('api.version.'.$key.'.prefix').'/'.Config::get('api.documentation_prefix')).'/';
+				}
+			}
 		}
 
-		$this->_doc_url = URL::to($this->curret_api.'/'.Config::get('apidoc.doc_segment')).'/';
 		$this->_routes = $this->_getRoutes();
 	}
 
@@ -42,15 +46,17 @@ class Documentation {
 		$routes = [];
 		foreach (Route::getRoutes() as $key=>$route)
 		{
-			$prefix = trim($this->curret_api,'/').'/';
+			$prefix = trim($this->current_api,'/').'/';
 			$uri = $route->getUri();
 			$uris = explode('/', str_replace($prefix,'',$uri));
+
 			if (strpos($uri, $prefix) === false) continue;
 			if (in_array($uris[1], ['{_missing}'])) continue;
 
-			if ($uris[0] !== Config::get('apidoc.doc_segment'))
+			if ($uris[0] !== Config::get('api.documentation_prefix'))
 			{
 				$action = $route->getAction();
+
 				if (isset($action['controller']))
 				{
 					$controller = explode('@', $action['controller']);
@@ -67,7 +73,11 @@ class Documentation {
 					$routes[$objectName][$uris[1]]['method'] = $route->getMethods()[0];
 					$routes[$objectName][$uris[1]]['middleware'] = $action['middleware'];
 				}
-				$routes[$objectName]['namespace'] = $action['namespace'];
+
+				if (isset($action['namespace']))
+				{
+					$routes[$objectName]['namespace'] = $action['namespace'];
+				}
 			}	
 			
 		}
@@ -84,8 +94,8 @@ class Documentation {
 
 	protected function _getObjectName($controller)
 	{
-		$controller = str_replace(Config::get('apidoc.controller_prefix'), '', $controller);
-		$controller = str_replace(Config::get('apidoc.controller_suffix'), '', $controller);
+		$controller = str_replace(Config::get('api.controller_prefix'), '', $controller);
+		$controller = str_replace(Config::get('api.controller_suffix'), '', $controller);
 		return $controller;
 	}
 
@@ -117,12 +127,22 @@ class Documentation {
 
 		$content = array();
 		
+		if ( ! Config::get('api.version'))
+		{
+			$content['current_version'] = false;
+		}
+		else
+		{
+			$segment = explode('/', $this->current_api);
+			$content['current_version'] = end($segment);
+		}
+
 		if ($activeController === '')
 		{
 			$content['type'] = 'home';
-			$content['body_title'] = Config::get('apidoc.project_name').' API Documentation';
-			$content['page_title'] = Config::get('apidoc.project_name').' API Documentation';
-			$content['description'] = Config::get('apidoc.project_description');
+			$content['body_title'] = Config::get('api.project_name').' API Documentation';
+			$content['page_title'] = Config::get('api.project_name').' API Documentation';
+			$content['description'] = Config::get('api.project_description');
 			$content['data'] = null;
 		}
 		else
@@ -132,7 +152,7 @@ class Documentation {
 				$activeFunction = '';
 			}
 
-			$className = $this->_routes[$activeController]['namespace'].'\\'.Config::get('apidoc.controller_prefix').ucwords($activeController).Config::get('apidoc.controller_suffix');
+			$className = $this->_routes[$activeController]['namespace'].'\\'.Config::get('api.controller_prefix').ucwords($activeController).Config::get('api.controller_suffix');
 			$content['type'] = 'class';
 			$content['page_title'] = 'Object '.ucwords($activeController);
 			$content['body_title'] = 'Object '.ucwords($activeController);
@@ -211,7 +231,7 @@ class Documentation {
 			if(strpos($line, '@') === 0) {
 				$param = substr($line, 1, strpos($line, ' ') - 1); //Get the parameter name
 				$value = substr($line, strlen($param) + 2); //Get the value
-				$value = explode(Config::get('apidoc.desc_sparator'), $value);
+				$value = explode(Config::get('api.description_sparator'), $value);
 				$comments[$param][] = [$param=>str_replace(' ','',$value[0]), 'description'=>(isset($value[1]) ? $value[1] : 'No Description'), 'role'=>(isset($value[2]) ? $value[2] : '')];
 			}
 			else if($line !== '') $comments['description'][] = $line;
