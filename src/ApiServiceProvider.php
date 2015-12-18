@@ -129,7 +129,7 @@ class ApiServiceProvider extends ServiceProvider
                         //register location views
                         $this->loadViewsFrom(__DIR__.'/views', 'doc');
                         
-                        Route::get($config->get('api.prefix').'/'.$key.'/'.$config->get('api.documentation_prefix').'/{controller?}/{function?}', function($controller='', $function=''){
+                        Route::get($config->get('api.prefix').'/'.$config->get('api.version.'.$key.'.prefix').'/'.$config->get('api.documentation_prefix').'/{controller?}/{function?}', function($controller='', $function=''){
                             $doc = new Documentation;
                             $data['menu'] = $doc->createMenu($controller, $function);
                             $data['content'] = $doc->createContent($controller, $function);

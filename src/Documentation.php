@@ -134,7 +134,18 @@ class Documentation {
 		else
 		{
 			$segment = explode('/', $this->current_api);
-			$content['current_version'] = end($segment);
+			$dataVersion = Config::get('api.version');
+			if (is_array($dataVersion) AND count($dataVersion) > 0)
+			{
+				foreach ($dataVersion as $key => $value)
+				{
+					if (isset($value['prefix']) AND $value['prefix'] === end($segment))
+					{
+						$content['current_version'] = $key;
+					}
+				}
+			}
+			
 		}
 
 		if ($activeController === '')
