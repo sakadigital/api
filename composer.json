@@ -1,0 +1,20 @@
+{
+    "name": "sakadigital/api",
+    "type": "library",
+    "description": "Package for build Rest Api for your application",
+    "keywords": ["laravel", "api", "api documentation", "rest api"],
+    "license": "MIT",
+    "authors": [
+        {"name": "Sakadigital","email": "tech@sakadigital.id"},
+        {"name": "Deden Maulana","email": "aku@dedenmaulana.com"}
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sakadigital\\Api\\": "src"
+        }
+    },
+    "minimum-stability": "stable"
+}

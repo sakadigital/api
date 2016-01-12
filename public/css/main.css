@@ -1,0 +1,9 @@
+.title{
+	padding: 10px 25px;
+	color: #fff;
+	font-weight: bold;
+	font-size: 20px;
+}
+.title small{
+	font-weight: normal;
+}
