@@ -20,13 +20,17 @@ After updating composer, add the ApiServiceProvider to the providers array in co
 ```
 Sakadigital\Api\ApiServiceProvider::class,
 ```
+and also add the facades
+```
+'Api' => Sakadigital\Api\Facades\Api::class,
+```
 Copy the package resource to your application with the publish command:
 ```
 php artisan vendor:publish
 ```
 by run command vendor:publish we will copy folder and file as following:
 * Config file `api.php` to `/config` folder
-* Asset folder `api` to `/public` folder, this folder contain css,js, etc.
+* Asset folder `apidoc` to `/public` folder, this folder contain css,js, etc.
 * Api structur `Api` folder to `/App`, this folder contain `Controllers` folder as a place for your api controller, and `routes.php` for api route.
 
 And you are ready to build your API.

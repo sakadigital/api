@@ -41,7 +41,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-<<<<<<< HEAD
     | middleware group
     |--------------------------------------------------------------------------
     | if you change the name of api group in your HTTP Kernel you should update
@@ -49,14 +48,6 @@ return [
     */
 
     'middleware' => 'api',
-=======
-    | skip laravel csrf token
-    |--------------------------------------------------------------------------
-    | by default we bypass csrf token for segment api prefix as you set above
-    */
-
-    'bypass_scrf_token' => true,
->>>>>>> 8e1db83822a787b91ffbbd7d1240c2be1b8e8fd7
 
     /*
     |--------------------------------------------------------------------------
