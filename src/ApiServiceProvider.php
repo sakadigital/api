@@ -106,6 +106,7 @@ class ApiServiceProvider extends ServiceProvider
                 {
                     //set route config
                     $routeConfig = [
+                        'middleware' => $config->get('api.middleware'),
                         'namespace' => $config->get('api.version.'.$key.'.namespace').'\Controllers',
                         'prefix' => $config->get('api.prefix').'/'.$config->get('api.version.'.$key.'.prefix')
                     ];
