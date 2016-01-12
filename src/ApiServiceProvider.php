@@ -19,7 +19,14 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $app = $this->app;
+
+         // create api
+        $app['api'] = $app->share(function ($app) {
+            return new Api;
+        });
+
+        $app->alias('api', 'Sakadigital\Api\Api');
     }
 
     /**
